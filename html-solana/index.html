@@ -33,6 +33,7 @@
         </a>
       </footer>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@web3auth/openlogin-adapter@0/dist/openloginAdapter.umd.min.js"></script>
 
@@ -44,7 +45,7 @@
     
     <script>
       const web3authSdk = window.Web3auth;
-      let web3AuthInstance = null;
+      let web3auth = null;
       const OpenloginAdapter = window.OpenloginAdapter.OpenloginAdapter;
 
       (async function init() {
@@ -56,28 +57,24 @@
 
         const web3AuthCtorParams = {
           clientId,
-              rpcTarget: "https://ssc-dao.genesysgo.net",
-              blockExplorer: "https://explorer.solana.com?cluster=mainnet",
-              displayName: "solana mainnet",
-              ticker: "SOL",
-        } }
-      
+          chainConfig: {
             chainNamespace: "solana",
-            theme: "dark",
-            loginMethodsOrder: ["facebook", "twitter"],
-            appLogo: "https://web3auth.io/images/w3a-L-Favicon-1.svg",
+            chainId:  "0x1",
+            rpcTarget: "https://ssc-dao.genesysgo.net", // This is the testnet RPC we have added, please pass on your own endpoint while creating an app
           }
         }
-        web3AuthInstance = new web3authSdk.Web3Auth(web3AuthCtorParams);
-          adapterSettings: {
-        subscribeAuthEvents(web3AuthInstance);
+        web3auth = new web3authSdk.Web3Auth(web3AuthCtorParams);
 
-        await web3AuthInstance.initModal();
-        console.log("web3AuthInstance", web3AuthInstance, web3AuthInstance.provider);
-        if (web3AuthInstance.provider) {
+        // REPLACE-const web3AuthOpenloginConfigure = {};-
+
+        subscribeAuthEvents(web3auth);
+
+        await web3auth.initModal();
+        console.log("web3auth", web3auth, web3auth.provider);
+        if (web3auth.provider) {
           $(".btn-logged-in").show();
           $(".btn-logged-out").hide();
-          if (web3AuthInstance.connectedAdapterName === "openlogin") {
+          if (web3auth.connectedAdapterName === "openlogin") {
             $("#sign-tx").show();
           }
         } else {
@@ -110,7 +107,7 @@
 
       $("#login").click(async function (event) {
         try {
-          const provider = await web3AuthInstance.connect();
+          const provider = await web3auth.connect();
           console.log("provider after login", provider);
           $(".btn-logged-out").hide();
           $(".btn-logged-in").show();
@@ -121,7 +118,7 @@
 
       $("#logout").click(async function (event) {
         try {
-          await web3AuthInstance.logout();
+          await web3auth.logout();
           $(".btn-logged-in").hide();
           $(".btn-logged-out").show();
         } catch (error) {
@@ -131,7 +128,7 @@
 
       $("#get-user-info").click(async function (event) {
         try {
-          const user = await web3AuthInstance.getUserInfo();
+          const user = await web3auth.getUserInfo();
           $("#code").text(JSON.stringify(user || {}, null, 2));
         } catch (error) {
           console.error(error.message);
@@ -140,7 +137,7 @@
 
       $("#get-accounts").click(async function (event) {
         try {
-          const accounts = await rpc.getAccounts(web3AuthInstance.provider);
+          const accounts = await rpc.getAccounts(web3auth.provider);
           $("#code").text(JSON.stringify(["accounts", accounts], null, 2));
         } catch (error) {
           console.error(error.message);
@@ -149,7 +146,7 @@
 
       $("#get-balance").click(async function (event) {
         try {
-          const balance = await rpc.getBalance(web3AuthInstance.provider);
+          const balance = await rpc.getBalance(web3auth.provider);
           $("#code").text(JSON.stringify(["balance", balance], null, 2));
         } catch (error) {
           console.error(error.message);
@@ -158,7 +155,7 @@
 
       $("#sign-message").click(async function (event) {
         try {
-          const signedMsg = await rpc.signMessage(web3AuthInstance.provider);
+          const signedMsg = await rpc.signMessage(web3auth.provider);
           $("#code").text(JSON.stringify(["signed message", signedMsg], null, 2));
         } catch (error) {
           console.error(error.message);
