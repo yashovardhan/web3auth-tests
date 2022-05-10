@@ -3,9 +3,9 @@ import { Web3Auth } from "@web3auth/web3auth";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { useEffect, useState } from "react";
 import "./App.css";
-    import RPC from "./solana"
+import RPC from "./solana"
   
-const clientId = "YOUR_CLIENT_ID"; // get from https://dashboard.web3auth.io
+const clientId = "BIHVV2anT6hhkYHoCvWv9I3C2eMS4MraZK-ZWIV9sjRmmMsy_o8aNqHGFvnnuunP2I7qp9SLbhKdrSaXeGJMK6s"; // get from https://dashboard.web3auth.io
 
 function App() {
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
@@ -14,25 +14,25 @@ function App() {
   useEffect(() => {
     const init = async () => {
       try {
-    export const initParams = {}
+    const initParams = {}
   
         const web3AuthCtorParams = {
           clientId,
           chainConfig: {
-            chainNamespace: "solana",
+            chainNamespace: CHAIN_NAMESPACES.SOLANA,
             chainId:  "0x1",
             rpcTarget: "https://ssc-dao.genesysgo.net", // This is the testnet RPC we have added, please pass on your own endpoint while creating an app
           }
         }
         const web3auth = new Web3Auth(web3AuthCtorParams);
-const openloginAdapter = new OpenloginAdapter({
-      adapterSettings: {
-        clientId,
-        network: "testnet",
-        uxMode: "redirect",
-      },
-    });
-        web3auth.configureAdapter(openloginAdapter);web3auth.configureAdapter(openloginAdapter);
+        const openloginAdapter = new OpenloginAdapter({
+          adapterSettings: {
+            clientId,
+            network: "testnet",
+            uxMode: "redirect",
+          },
+        });
+        web3auth.configureAdapter(openloginAdapter);
         subscribeAuthEvents(web3auth);
         setWeb3auth(web3auth);
         await web3auth.initModal(initParams);
@@ -197,8 +197,7 @@ const openloginAdapter = new OpenloginAdapter({
 
       <footer className="footer">
         <a href="https://github.com/Web3Auth/Web3Auth/tree/master/examples/react-app" target="_blank" rel="noopener noreferrer">
-          Source code {"  "}
-          <img className="logo" src="/images/github-logo.png" alt="github-logo" />
+          Source code
         </a>
       </footer>
     </div>
