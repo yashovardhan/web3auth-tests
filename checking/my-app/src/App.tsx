@@ -4,8 +4,7 @@ import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { useEffect, useState } from "react";
 import "./App.css";
 import RPC from "./solana"
-  
-const clientId = "BIHVV2anT6hhkYHoCvWv9I3C2eMS4MraZK-ZWIV9sjRmmMsy_o8aNqHGFvnnuunP2I7qp9SLbhKdrSaXeGJMK6s"; // get from https://dashboard.web3auth.io
+const clientId = "YOUR_CLIENT_ID"; // get from https://dashboard.web3auth.io
 
 function App() {
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
@@ -25,13 +24,13 @@ function App() {
           }
         }
         const web3auth = new Web3Auth(web3AuthCtorParams);
-        const openloginAdapter = new OpenloginAdapter({
-          adapterSettings: {
-            clientId,
-            network: "testnet",
-            uxMode: "redirect",
-          },
-        });
+const openloginAdapter = new OpenloginAdapter({
+      adapterSettings: {
+        clientId,
+        network: "testnet",
+        uxMode: "redirect",
+      },
+    });
         web3auth.configureAdapter(openloginAdapter);
         subscribeAuthEvents(web3auth);
         setWeb3auth(web3auth);
@@ -137,6 +136,7 @@ function App() {
       return;
     }
     const rpc = new RPC(provider);
+    debugger;
     const result = await rpc.signAndSendTransaction();
     uiConsole(result);
   };
@@ -189,7 +189,7 @@ function App() {
       <h1 className="title">
         <a target="_blank" href="http://web3auth.io/" rel="noreferrer">
           Web3Auth
-        </a>{" "}
+        </a>
         & ReactJS Example
       </h1>
 

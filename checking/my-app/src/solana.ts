@@ -48,6 +48,7 @@ export default class SolanaRpc {
     try {
       const solanaWallet = new SolanaWallet(this.provider);
       const connectionConfig = await solanaWallet.request<CustomChainConfig>({ method: "solana_provider_config", params: [] });
+      debugger;
       const conn = new Connection(connectionConfig.rpcTarget);
 
       const pubKey = await solanaWallet.requestAccounts();
@@ -61,7 +62,7 @@ export default class SolanaRpc {
       const { signature } = await solanaWallet.signAndSendTransaction(transaction);
       return signature;
     } catch (error) {
-      console.error("Error", error);
+      console.error("Error", JSON.stringify(error));
       throw error;
     }
   };
