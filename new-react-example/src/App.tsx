@@ -4,7 +4,7 @@ import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { useEffect, useState } from "react";
 import "./App.css";
 import RPC from "./evm";
-const clientId = "YOUR_CLIENT_ID"; // get from https://dashboard.web3auth.io
+const clientId = "BIHVV2anT6hhkYHoCvWv9I3C2eMS4MraZK-ZWIV9sjRmmMsy_o8aNqHGFvnnuunP2I7qp9SLbhKdrSaXeGJMK6s"; // get from https://dashboard.web3auth.io
 
 function App() {
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
@@ -20,7 +20,6 @@ function App() {
           chainConfig: {
             chainNamespace: CHAIN_NAMESPACES.EIP155,
             chainId:  "0x1",
-            rpcTarget: "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", // This is the testnet RPC we have added, please pass on your own endpoint while creating an app
           }
         }
         const web3auth = new Web3Auth(web3AuthCtorParams);
