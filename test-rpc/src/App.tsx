@@ -2,8 +2,9 @@ import { ADAPTER_EVENTS, CHAIN_NAMESPACES, SafeEventEmitterProvider } from "@web
 import { Web3Auth } from "@web3auth/web3auth";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { useEffect, useState } from "react";
-import { getAccounts, getBalance, signMessage, signTransaction, sendTransaction } from "./rpc-calls";
 import "./App.css";
+import StarkExRPC from "./starkex";
+  
 const clientId = "YOUR_CLIENT_ID"; // get from https://dashboard.web3auth.io
 
 function App() {
@@ -18,20 +19,19 @@ function App() {
         const web3AuthCtorParams = {
           clientId,
           chainConfig: {
-            chainNamespace: CHAIN_NAMESPACES.SOLANA,
-            chainId:  "0x1",
-            rpcTarget: "https://ssc-dao.genesysgo.net", // This is the testnet RPC we have added, please pass on your own endpoint while creating an app
+            chainNamespace: CHAIN_NAMESPACES.EIP155,
+            chainId:  "0x1", // This is the testnet RPC we have added, please pass on your own endpoint while creating an app
           }
         }
         const web3auth = new Web3Auth(web3AuthCtorParams);
-const openloginAdapter = new OpenloginAdapter({
-      adapterSettings: {
-        clientId,
-        network: "testnet",
-        uxMode: "redirect",
-      },
-    });
-        web3auth.configureAdapter(openloginAdapter);
+
+        const openloginAdapter = new OpenloginAdapter({
+          adapterSettings: {
+            clientId,
+            network: "testnet",
+            uxMode: "redirect",
+          },
+        });        web3auth.configureAdapter(openloginAdapter);
         subscribeAuthEvents(web3auth);
         setWeb3auth(web3auth);
         await web3auth.initModal(initParams);
@@ -90,6 +90,30 @@ const openloginAdapter = new OpenloginAdapter({
     setProvider(null);
   };
 
+  const onGetStarkHDAccount = async () => {
+    const RPC = new StarkExRPC(provider as SafeEventEmitterProvider);
+    const starkaccounts = await RPC.getStarkAccount();
+    uiConsole(starkaccounts);
+  };
+
+  const onMintRequest = async () => {
+    const RPC = new StarkExRPC(provider as SafeEventEmitterProvider);
+    const request = await RPC.onMintRequest();
+    uiConsole(request);
+  };
+
+  const onDepositRequest = async () => {
+    const RPC = new StarkExRPC(provider as SafeEventEmitterProvider);
+    const request = await RPC.onDepositRequest();
+    uiConsole(request);
+  };
+
+  const onWithdrawalRequest = async () => {
+    const RPC = new StarkExRPC(provider as SafeEventEmitterProvider);
+    const request = await RPC.onWithdrawalRequest();
+    uiConsole(request);
+  };
+
   function uiConsole(...args: any[]): void {
     const el = document.querySelector("#console>p");
     if (el) {
@@ -102,20 +126,17 @@ const openloginAdapter = new OpenloginAdapter({
       <button onClick={getUserInfo} className="card">
         Get User Info
       </button>
-      <button onClick={getAccounts} className="card">
-        Get Accounts
+      <button onClick={onGetStarkHDAccount} className="card">
+        Get Stark Accounts
       </button>
-      <button onClick={getBalance} className="card">
-        Get Balance
+      <button onClick={onMintRequest} className="card">
+        Mint Request
       </button>
-      <button onClick={signMessage} className="card">
-        Sign Message
+      <button onClick={onDepositRequest} className="card">
+        Deposit Request
       </button>
-      <button onClick={signTransaction} className="card">
-        Sign Transaction
-      </button>
-      <button onClick={sendTransaction} className="card">
-        Send Transaction
+      <button onClick={onWithdrawalRequest} className="card">
+        Withdraw Request
       </button>
       <button onClick={logout} className="card">
         Log Out
@@ -138,7 +159,7 @@ const openloginAdapter = new OpenloginAdapter({
       <h1 className="title">
         <a target="_blank" href="http://web3auth.io/" rel="noreferrer">
           Web3Auth
-        </a>
+        </a>{" "}
         & ReactJS Example
       </h1>
 
@@ -146,7 +167,8 @@ const openloginAdapter = new OpenloginAdapter({
 
       <footer className="footer">
         <a href="https://github.com/Web3Auth/Web3Auth/tree/master/examples/react-app" target="_blank" rel="noopener noreferrer">
-          Source code
+          Source code {"  "}
+          <img className="logo" src="/images/github-logo.png" alt="github-logo" />
         </a>
       </footer>
     </div>
