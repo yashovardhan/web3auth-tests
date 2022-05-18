@@ -15,17 +15,17 @@ function CustomUI() {
       try {
   const web3AuthCoreCtorParams = {
     clientId,
-    chainConfig: { chainNamespace:  "eip155", chainId: "HEX_CHAIN_ID" }
+    chainConfig: { chainNamespace:  CHAIN_NAMESPACES.EIP155, chainId: "0x1", rpcTarget: "https://mainnet.infura.io/v3/7f513826728a4361845254ab179f607e" }
   };
 
-        const web3auth = new Web3AuthCore(web3AuthCtorParams);
+        const web3auth = new Web3AuthCore(web3AuthCoreCtorParams);
 
           const openloginAdapter = new OpenloginAdapter({
           adapterSettings: {
           clientId,
           network: "testnet",
           uxMode: "redirect",
-          whitelabel: {
+          whiteLabel: {
             name: "Your app Name",
               logoLight: "https://web3auth.io/images/w3a-L-Favicon-1.svg",
               logoDark: "https://web3auth.io/images/w3a-D-Favicon-1.svg",
@@ -35,13 +35,16 @@ function CustomUI() {
           loginConfig: {
             jwt: {
               name: "Custom Auth Login",
-              verifier: "YOUR_VERIFIER_NAME",
-              typeOfLogin: "jwt",
-              clientId,
+              verifier: "integration-builder", //pass over your verifier details here
+              typeOfLogin: "google", //pass over your verifier details here
+              clientId: "995051377270-uj3oq6tnjv9du3jj11202km4lclqn4mp.apps.googleusercontent.com",
             },
           },
         },
       });
+      web3auth.configureAdapter(openloginAdapter);
+
+
         subscribeAuthEvents(web3auth);
         setWeb3auth(web3auth);
         await web3auth.init();
@@ -83,11 +86,6 @@ function CustomUI() {
       const web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
         relogin: true,
         loginProvider: "jwt",
-        extraLoginOptions: {
-          id_token: jwtToken,
-          domain: "YOUR_APP_DOMAIN",
-          verifierIdField: "sub",
-        },
       });
       
     setProvider(web3authProvider);
@@ -99,7 +97,7 @@ function CustomUI() {
       return;
     }
     const user = await web3auth.getUserInfo();
-    console.log("User info", user);
+    uiConsole(user);
   };
 
   const logout = async () => {
@@ -112,26 +110,26 @@ function CustomUI() {
   };
 
   const onGetStarkHDAccount = async () => {
-    const RPC = new StarkExRPC(provider as SafeEventEmitterProvider);
-    const starkaccounts = await RPC.getStarkAccount();
+    const rpc = new RPC(provider as SafeEventEmitterProvider);
+    const starkaccounts = await rpc.getStarkAccount();
     uiConsole(starkaccounts);
   };
 
   const onMintRequest = async () => {
-    const RPC = new StarkExRPC(provider as SafeEventEmitterProvider);
-    const request = await RPC.onMintRequest();
+    const rpc = new RPC(provider as SafeEventEmitterProvider);
+    const request = await rpc.onMintRequest();
     uiConsole(request);
   };
 
   const onDepositRequest = async () => {
-    const RPC = new StarkExRPC(provider as SafeEventEmitterProvider);
-    const request = await RPC.onDepositRequest();
+    const rpc = new RPC(provider as SafeEventEmitterProvider);
+    const request = await rpc.onDepositRequest();
     uiConsole(request);
   };
 
   const onWithdrawalRequest = async () => {
-    const RPC = new StarkExRPC(provider as SafeEventEmitterProvider);
-    const request = await RPC.onWithdrawalRequest();
+    const rpc = new RPC(provider as SafeEventEmitterProvider);
+    const request = await rpc.onWithdrawalRequest();
     uiConsole(request);
   };
 
