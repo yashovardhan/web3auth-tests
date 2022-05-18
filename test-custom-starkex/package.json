@@ -5,6 +5,7 @@
   "dependencies": {
     "@web3auth/base": "^0.7.0",
     "@web3auth/web3auth": "^0.7.0",
+    "@web3auth/core": "^0.7.0",
     "@web3auth/openlogin-adapter": "^0.7.0",
     "@starkware-industries/starkex-js": "0.0.6",
     "@toruslabs/starkware-crypto": "^1.1.0",

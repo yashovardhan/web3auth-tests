@@ -1,46 +1,56 @@
-import { ADAPTER_EVENTS, CHAIN_NAMESPACES, SafeEventEmitterProvider } from "@web3auth/base";
-import { Web3Auth } from "@web3auth/web3auth";
+import { ADAPTER_EVENTS, CHAIN_NAMESPACES, SafeEventEmitterProvider, WALLET_ADAPTERS } from "@web3auth/base";
+import { Web3AuthCore } from "@web3auth/core";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { useEffect, useState } from "react";
 import "./App.css";
 import RPC from "./starkex";
 const clientId = "YOUR_CLIENT_ID"; // get from https://dashboard.web3auth.io
 
-function App() {
-  const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
+function CustomUI() {
+  const [web3auth, setWeb3auth] = useState<Web3AuthCore | null>(null);
   const [provider, setProvider] = useState<SafeEventEmitterProvider | null>(null);
 
   useEffect(() => {
     const init = async () => {
       try {
-    const initParams = {}
-  
-        const web3AuthCtorParams = {
+  const web3AuthCoreCtorParams = {
+    clientId,
+    chainConfig: { chainNamespace:  "eip155", chainId: "HEX_CHAIN_ID" }
+  };
+
+        const web3auth = new Web3AuthCore(web3AuthCtorParams);
+
+          const openloginAdapter = new OpenloginAdapter({
+          adapterSettings: {
           clientId,
-          chainConfig: {
-            chainNamespace: CHAIN_NAMESPACES.EIP155,
-            chainId:  "0x1",
-            rpcTarget: "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", // This is the testnet RPC we have added, please pass on your own endpoint while creating an app
-          }
-        }
-        const web3auth = new Web3Auth(web3AuthCtorParams);
-const openloginAdapter = new OpenloginAdapter({
-      adapterSettings: {
-        clientId,
-        network: "testnet",
-        uxMode: "redirect",
-      },
-    });
-        web3auth.configureAdapter(openloginAdapter);
+          network: "testnet",
+          uxMode: "redirect",
+          whitelabel: {
+            name: "Your app Name",
+              logoLight: "https://web3auth.io/images/w3a-L-Favicon-1.svg",
+              logoDark: "https://web3auth.io/images/w3a-D-Favicon-1.svg",
+              defaultLanguage: "en",
+              dark: true, // whether to enable dark mode. defaultValue: false
+            },
+          loginConfig: {
+            jwt: {
+              name: "Custom Auth Login",
+              verifier: "YOUR_VERIFIER_NAME",
+              typeOfLogin: "jwt",
+              clientId,
+            },
+          },
+        },
+      });
         subscribeAuthEvents(web3auth);
         setWeb3auth(web3auth);
-        await web3auth.initModal(initParams);
+        await web3auth.init();
       } catch (error) {
         console.error(error);
       }
     };
 
-    const subscribeAuthEvents = (web3auth: Web3Auth) => {
+    const subscribeAuthEvents = (web3auth: Web3AuthCore) => {
       // Can subscribe to all ADAPTER_EVENTS and LOGIN_MODAL_EVENTS
       web3auth.on(ADAPTER_EVENTS.CONNECTED, (data: unknown) => {
         console.log("Yeah!, you are successfully logged in", data);
@@ -68,8 +78,19 @@ const openloginAdapter = new OpenloginAdapter({
       console.log("web3auth not initialized yet");
       return;
     }
-    const provider = await web3auth.connect();
-    setProvider(provider);
+
+      const jwtToken = "YOUR_ID_TOKEN";
+      const web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
+        relogin: true,
+        loginProvider: "jwt",
+        extraLoginOptions: {
+          id_token: jwtToken,
+          domain: "YOUR_APP_DOMAIN",
+          verifierIdField: "sub",
+        },
+      });
+      
+    setProvider(web3authProvider);
   };
 
   const getUserInfo = async () => {
@@ -78,7 +99,7 @@ const openloginAdapter = new OpenloginAdapter({
       return;
     }
     const user = await web3auth.getUserInfo();
-    uiConsole(user);
+    console.log("User info", user);
   };
 
   const logout = async () => {
@@ -113,6 +134,7 @@ const openloginAdapter = new OpenloginAdapter({
     const request = await RPC.onWithdrawalRequest();
     uiConsole(request);
   };
+
 
   function uiConsole(...args: any[]): void {
     const el = document.querySelector("#console>p");
@@ -149,9 +171,11 @@ const openloginAdapter = new OpenloginAdapter({
   );
 
   const unloggedInView = (
-    <button onClick={login} className="card">
-      Login
-    </button>
+    <>
+      <button onClick={login} className="card">
+        Google Login
+      </button>
+    </>
   );
 
   return (
@@ -159,7 +183,7 @@ const openloginAdapter = new OpenloginAdapter({
       <h1 className="title">
         <a target="_blank" href="http://web3auth.io/" rel="noreferrer">
           Web3Auth
-        </a>
+        </a>{" "}
         & ReactJS Example
       </h1>
 
@@ -167,11 +191,12 @@ const openloginAdapter = new OpenloginAdapter({
 
       <footer className="footer">
         <a href="https://github.com/Web3Auth/Web3Auth/tree/master/examples/react-app" target="_blank" rel="noopener noreferrer">
-          Source code
+          Source code {"  "}
+          <img className="logo" src="/images/github-logo.png" alt="github-logo" />
         </a>
       </footer>
     </div>
   );
 }
 
-export default App;
+export default CustomUI;
