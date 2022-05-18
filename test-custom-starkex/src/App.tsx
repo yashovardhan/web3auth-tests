@@ -13,12 +13,20 @@ function CustomUI() {
   useEffect(() => {
     const init = async () => {
       try {
-  const web3AuthCoreCtorParams = {
-    clientId,
-    chainConfig: { chainNamespace:  CHAIN_NAMESPACES.EIP155, chainId: "0x1", rpcTarget: "https://mainnet.infura.io/v3/7f513826728a4361845254ab179f607e" }
-  };
-
-        const web3auth = new Web3AuthCore(web3AuthCoreCtorParams);
+        const web3AuthCtorParams = {
+          clientId,
+          chainConfig: {
+            chainNamespace: CHAIN_NAMESPACES.EIP155,
+            chainId: "0x1",
+            rpcTarget: "https://mainnet.infura.io/v3/7f513826728a4361845254ab179f607e", // This is the testnet RPC we have added, please pass on your own endpoint while creating an app
+          },
+          uiConfig: {
+            theme: "dark",
+            loginMethodsOrder: ["facebook", "twitter"],
+            appLogo: "https://web3auth.io/images/w3a-L-Favicon-1.svg", // Your App Logo Here
+          }
+        }
+        const web3auth = new Web3AuthCore(web3AuthCtorParams);
 
           const openloginAdapter = new OpenloginAdapter({
           adapterSettings: {
@@ -43,8 +51,6 @@ function CustomUI() {
         },
       });
       web3auth.configureAdapter(openloginAdapter);
-
-
         subscribeAuthEvents(web3auth);
         setWeb3auth(web3auth);
         await web3auth.init();
@@ -86,6 +92,11 @@ function CustomUI() {
       const web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
         relogin: true,
         loginProvider: "jwt",
+        extraLoginOptions: {
+          id_token: jwtToken,
+          domain: "YOUR_APP_DOMAIN",
+          verifierIdField: "sub",
+        },
       });
       
     setProvider(web3authProvider);
@@ -189,8 +200,7 @@ function CustomUI() {
 
       <footer className="footer">
         <a href="https://github.com/Web3Auth/Web3Auth/tree/master/examples/react-app" target="_blank" rel="noopener noreferrer">
-          Source code {"  "}
-          <img className="logo" src="/images/github-logo.png" alt="github-logo" />
+          Source code
         </a>
       </footer>
     </div>
