@@ -37,7 +37,6 @@ const rpc = (() => {
   const onMintRequest = async (provider, starkExAPI) => {
     try {
       const txId = await starkExAPI.gateway.getFirstUnusedTxId();
-      console.log(this)
       const starkKey = await getStarkKey(provider);
 
       const request = {
