@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@web3auth/base": "^0.7.0",
-    "@web3auth/web3auth": "^0.7.0",
     "@toruslabs/openlogin-starkkey": "^1.7.0",
-    "starknet": "^1.5.4",
+    "@web3auth/base": "^0.9.4",
+    "@web3auth/web3auth": "^0.9.4",
     "bn.js": "^5.2.0",
     "elliptic": "^6.5.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "starknet": "^3.11.0",
     "web3": "^1.7.0"
   },
   "scripts": {
@@ -27,9 +27,11 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "chrome >= 67",
+      "edge >= 79",
+      "firefox >= 68",
+      "opera >= 54",
+      "safari >= 14"
     ],
     "development": [
       "last 1 chrome version",

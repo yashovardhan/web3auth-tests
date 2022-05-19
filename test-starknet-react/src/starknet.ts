@@ -1,13 +1,10 @@
 import type { SafeEventEmitterProvider } from "@web3auth/base";
 import Web3 from "web3";
-import { getStarkHDAccount, STARKNET_NETWORKS, sign, verify } from "@toruslabs/openlogin-starkkey";
-import { binaryToHex, binaryToUtf8, bufferToBinary, bufferToHex, hexToBinary, removeHexPrefix } from "enc-utils";
-import { defaultProvider } from "starknet";
+import { CompiledContract, defaultProvider } from "starknet";
 import CompiledAccountContractAbi from "./account.json";
-import { BN } from "bn.js";
+import BN from "bn.js";
 import { ec as elliptic } from "elliptic";
 import { grindKey, ec as starkEc } from "@toruslabs/starkware-crypto";
-import fs from "fs";
 
 export default class EthereumRpc {
   private provider: SafeEventEmitterProvider;
@@ -30,8 +27,11 @@ export default class EthereumRpc {
     try {
       const starkEcOrder = starkEc.n;
       const provider = this.provider;
-      const privKey = await provider.request({ method: "eth_private_key" });
-      const account = starkEc.keyFromPrivate(grindKey(privKey as string, starkEcOrder as BN), "hex");
+      const privKey = await provider.request({ method: "private_key" });
+      const account = starkEc.keyFromPrivate(
+        grindKey(privKey as string, starkEcOrder as BN),
+        "hex"
+      );
       return account;
     } catch (error: unknown) {
       console.error((error as Error).message);
@@ -49,15 +49,17 @@ export default class EthereumRpc {
     }
   };
 
-  deployAccount = async (): Promise<string | undefined> => {
+  deployAccount = async (): Promise<void> => {
     try {
       const account = await this.getStarkAccount();
-      const compiledArgentAccount = JSON.parse(fs.readFileSync("./account.json").toString("ascii"));
-      const accountResponse = await defaultProvider.deployContract({
-        contract: compiledArgentAccount,
-        addressSalt: account.getPublic("hex"),
-      });
-      return accountResponse;
+      if (account) {
+        const contract = CompiledAccountContractAbi.toString();
+        const response = await defaultProvider.deployContract({
+          contract: contract
+        })
+
+        console.log("accountResponse", response);
+      }
     } catch (error: unknown) {
       console.error((error as Error).message);
       throw error;

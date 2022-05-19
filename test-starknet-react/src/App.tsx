@@ -19,7 +19,7 @@ function App() {
         const web3AuthCtorParams = {
           clientId,
           chainConfig: {
-            chainNamespace: CHAIN_NAMESPACES.EIP155,
+            chainNamespace: CHAIN_NAMESPACES.OTHER,
             chainId:  "0x1",
             rpcTarget: "https://ropsten.infura.io/v3/", // This is the testnet RPC we have added, please pass on your own endpoint while creating an app
           }
