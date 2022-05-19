@@ -1,6 +1,6 @@
 import type { SafeEventEmitterProvider } from "@web3auth/base";
 import Web3 from "web3";
-import { CompiledContract, defaultProvider } from "starknet";
+import { AddTransactionResponse, CompiledContract, defaultProvider } from "starknet";
 import CompiledAccountContractAbi from "./account.json";
 import BN from "bn.js";
 import { ec as elliptic } from "elliptic";
@@ -49,20 +49,21 @@ export default class EthereumRpc {
     }
   };
 
-  deployAccount = async (): Promise<void> => {
+  deployAccount = async (): Promise<AddTransactionResponse | undefined> => {
     try {
       const account = await this.getStarkAccount();
       if (account) {
-        const contract = CompiledAccountContractAbi.toString();
+        const contract = JSON.parse(JSON.stringify(CompiledAccountContractAbi));
         const response = await defaultProvider.deployContract({
           contract: contract
         })
-
-        console.log("accountResponse", response);
+        return response;
       }
     } catch (error: unknown) {
+      console.log(error);
       console.error((error as Error).message);
       throw error;
     }
   };
+
 }

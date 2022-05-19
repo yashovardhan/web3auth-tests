@@ -20,8 +20,6 @@ function App() {
           clientId,
           chainConfig: {
             chainNamespace: CHAIN_NAMESPACES.OTHER,
-            chainId:  "0x1",
-            rpcTarget: "https://ropsten.infura.io/v3/", // This is the testnet RPC we have added, please pass on your own endpoint while creating an app
           }
         }
         const web3auth = new Web3Auth(web3AuthCtorParams);
