@@ -1,7 +1,7 @@
 import type { SafeEventEmitterProvider } from "@web3auth/base";
 import Web3 from "web3";
 import { AddTransactionResponse, CompiledContract, defaultProvider } from "starknet";
-import CompiledAccountContractAbi from "./account.json";
+import CompiledAccountContractAbi from "./ArgentAccount.json";
 import BN from "bn.js";
 import { ec as elliptic } from "elliptic";
 import { grindKey, ec as starkEc } from "@toruslabs/starkware-crypto";
@@ -28,10 +28,7 @@ export default class EthereumRpc {
       const starkEcOrder = starkEc.n;
       const provider = this.provider;
       const privKey = await provider.request({ method: "private_key" });
-      const account = starkEc.keyFromPrivate(
-        grindKey(privKey as string, starkEcOrder as BN),
-        "hex"
-      );
+      const account = starkEc.keyFromPrivate(grindKey(privKey as string, starkEcOrder as BN), "hex");
       return account;
     } catch (error: unknown) {
       console.error((error as Error).message);
@@ -55,8 +52,8 @@ export default class EthereumRpc {
       if (account) {
         const contract = JSON.parse(JSON.stringify(CompiledAccountContractAbi));
         const response = await defaultProvider.deployContract({
-          contract: contract
-        })
+          contract: contract,
+        });
         return response;
       }
     } catch (error: unknown) {
@@ -65,5 +62,4 @@ export default class EthereumRpc {
       throw error;
     }
   };
-
 }

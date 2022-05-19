@@ -4,7 +4,6 @@ import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { useEffect, useState } from "react";
 import "./App.css";
 import RPC from "./starknet";
-  
 const clientId = "YOUR_CLIENT_ID"; // get from https://dashboard.web3auth.io
 
 function App() {
@@ -16,22 +15,21 @@ function App() {
       try {
     const initParams = {}
   
-        const web3AuthCtorParams = {
-          clientId,
-          chainConfig: {
-            chainNamespace: CHAIN_NAMESPACES.OTHER,
-          }
-        }
-        const web3auth = new Web3Auth(web3AuthCtorParams);
-
-        const openloginAdapter = new OpenloginAdapter({
-          adapterSettings: {
+          const web3AuthCtorParams = {
             clientId,
-            network: "testnet",
-            uxMode: "redirect",
-          },
-        });
-                web3auth.configureAdapter(openloginAdapter);
+            chainConfig: {
+              chainNamespace: CHAIN_NAMESPACES.OTHER,
+            }
+          }
+        const web3auth = new Web3Auth(web3AuthCtorParams);
+const openloginAdapter = new OpenloginAdapter({
+      adapterSettings: {
+        clientId,
+        network: "testnet",
+        uxMode: "redirect",
+      },
+    });
+    web3auth.configureAdapter(openloginAdapter);
         subscribeAuthEvents(web3auth);
         setWeb3auth(web3auth);
         await web3auth.initModal(initParams);
@@ -141,7 +139,7 @@ function App() {
       <h1 className="title">
         <a target="_blank" href="http://web3auth.io/" rel="noreferrer">
           Web3Auth
-        </a>{" "}
+        </a>
         & ReactJS Example
       </h1>
 
@@ -149,8 +147,7 @@ function App() {
 
       <footer className="footer">
         <a href="https://github.com/Web3Auth/Web3Auth/tree/master/examples/react-app" target="_blank" rel="noopener noreferrer">
-          Source code {"  "}
-          <img className="logo" src="/images/github-logo.png" alt="github-logo" />
+          Source code
         </a>
       </footer>
     </div>
