@@ -18,9 +18,10 @@
 </template>
 
 <script lang="ts">
-import { ADAPTER_STATUS, CONNECTED_EVENT_DATA, SafeEventEmitterProvider } from "@web3auth/base";
+import { ADAPTER_STATUS, CONNECTED_EVENT_DATA, CHAIN_NAMESPACES, SafeEventEmitterProvider } from "@web3auth/base";
 import { LOGIN_MODAL_EVENTS } from "@web3auth/ui";
 import { Web3Auth } from "@web3auth/web3auth";
+import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { ref, onMounted } from "vue";
 import RPC from "./evm";
 export default {
