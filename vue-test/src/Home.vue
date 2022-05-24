@@ -6,10 +6,38 @@
         fontSize: '12px',
       }"
     >
-      <button class="rpcBtn" v-if="!provider" @click="connect()" style="cursor: pointer">Connect</button>
-      <button class="rpcBtn" v-if="provider" @click="logout()" style="cursor: pointer">Logout</button>
-      <button class="rpcBtn" v-if="provider" @click="getUserInfo()" style="cursor: pointer">Get User Info</button>
-      <button class="rpcBtn" v-if="provider" @click="getUserAccount()" style="cursor: pointer">Get User Account</button>
+      <button
+        class="rpcBtn"
+        v-if="!provider"
+        @click="connect()"
+        style="cursor: pointer"
+      >
+        Connect
+      </button>
+      <button
+        class="rpcBtn"
+        v-if="provider"
+        @click="logout()"
+        style="cursor: pointer"
+      >
+        Logout
+      </button>
+      <button
+        class="rpcBtn"
+        v-if="provider"
+        @click="getUserInfo()"
+        style="cursor: pointer"
+      >
+        Get User Info
+      </button>
+      <button
+        class="rpcBtn"
+        v-if="provider"
+        @click="getUserAccount()"
+        style="cursor: pointer"
+      >
+        Get User Account
+      </button>
     </section>
     <div id="console" style="white-space: pre-line">
       <p style="white-space: pre-line"></p>
@@ -18,12 +46,18 @@
 </template>
 
 <script lang="ts">
-import { ADAPTER_STATUS, CONNECTED_EVENT_DATA, CHAIN_NAMESPACES, SafeEventEmitterProvider } from "@web3auth/base";
+import {
+  ADAPTER_STATUS,
+  CONNECTED_EVENT_DATA,
+  CHAIN_NAMESPACES,
+  SafeEventEmitterProvider,
+} from "@web3auth/base";
 import { LOGIN_MODAL_EVENTS } from "@web3auth/ui";
-import { Web3Auth } from "@web3auth/web3auth";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import { Web3Auth } from "@web3auth/web3auth";
 import { ref, onMounted } from "vue";
 import RPC from "./evm";
+
 export default {
   name: "Home",
   props: {
@@ -36,30 +70,31 @@ export default {
     const provider = ref<SafeEventEmitterProvider | null>(null);
     const clientId = "YOUR_CLIENT_ID"; // get from https://dashboard.web3auth.io
 
-    const initParams = {}
-  
-        const web3AuthCtorParams = {
-          clientId,
-          chainConfig: {
-            chainNamespace: CHAIN_NAMESPACES.EIP155,
-            chainId:  "0x1",
-            rpcTarget: "https://ropsten.infura.io/v3/", // This is the testnet RPC we have added, please pass on your own endpoint while creating an app
-          }
-        }
+    const initParams = {};
+
+    const web3AuthCtorParams = {
+      clientId,
+      chainConfig: {
+        chainNamespace: CHAIN_NAMESPACES.EIP155,
+        chainId: "0x1",
+        rpcTarget:
+          "https://mainnet.infura.io/v3/7f513826728a4361845254ab179f607e", // This is the testnet RPC we have added, please pass on your own endpoint while creating an app
+      },
+    };
     let web3auth = new Web3Auth(web3AuthCtorParams);
     onMounted(async () => {
       try {
         loading.value = true;
 
         web3auth = new Web3Auth(web3AuthCtorParams);
-const openloginAdapter = new OpenloginAdapter({
-      adapterSettings: {
-        clientId,
-        network: "testnet",
-        uxMode: "redirect",
-      },
-    });
-    web3auth.configureAdapter(openloginAdapter);
+        const openloginAdapter = new OpenloginAdapter({
+          adapterSettings: {
+            clientId,
+            network: "testnet",
+            uxMode: "redirect",
+          },
+        });
+        web3auth.configureAdapter(openloginAdapter);
         subscribeAuthEvents();
 
         await web3auth.initModal(initParams);
@@ -72,10 +107,13 @@ const openloginAdapter = new OpenloginAdapter({
     });
 
     function subscribeAuthEvents() {
-      web3auth.on(ADAPTER_STATUS.CONNECTED, async (data: CONNECTED_EVENT_DATA) => {
-        uiConsole("connected to wallet", data);
-        provider.value = web3auth.provider;
-      });
+      web3auth.on(
+        ADAPTER_STATUS.CONNECTED,
+        async (data: CONNECTED_EVENT_DATA) => {
+          uiConsole("connected to wallet", data);
+          provider.value = web3auth.provider;
+        }
+      );
       web3auth.on(ADAPTER_STATUS.CONNECTING, () => {
         uiConsole("connecting");
         connecting.value = true;
