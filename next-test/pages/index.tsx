@@ -2,9 +2,7 @@ import type { NextPage } from 'next';
 import dynamic from "next/dynamic";
 
 const App = dynamic(
-  () => {
-    return import("./App");
-  },
+  () => import("./App"),
   { ssr: false }
 );
 

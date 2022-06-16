@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Web3Auth } from "@web3auth/web3auth";
+import { Web3AuthCore } from "@web3auth/core";
 import { WALLET_ADAPTERS, CHAIN_NAMESPACES, SafeEventEmitterProvider } from "@web3auth/base";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import RPC from "./evm";
@@ -7,14 +7,13 @@ import RPC from "./evm";
 const clientId = "BDzbs6kQhq9pbuZlk_-oDnmVKl-pd8xFADhc9w4A5HdhCTbGX26DgCiWO03raOLe9ZNkiekJ29NFQ7gpSrzkTlg"; 
 
 function App() {
-  const [web3auth, setWeb3Auth] = useState<Web3Auth | null>(null);
+  const [web3auth, setWeb3Auth] = useState<Web3AuthCore | null>(null);
   const [provider, setProvider] = useState<SafeEventEmitterProvider | null>(null);
 
   useEffect(() => {
     const init = async () => {
       try {
-        const web3auth = new Web3Auth({
-          clientId,
+        const web3auth = new Web3AuthCore({
           chainConfig: {
             chainNamespace: CHAIN_NAMESPACES.EIP155,
             chainId:  "0x1",
@@ -38,7 +37,7 @@ function App() {
 
         web3auth.configureAdapter(openloginAdapter);
         setWeb3Auth(web3auth);
-        await web3auth.initModal();
+        await web3auth.init();
       } catch (error) {
         console.error(error);
       }

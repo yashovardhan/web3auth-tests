@@ -13,7 +13,7 @@ export default class EthereumRpc {
       const accounts = await web3.eth.getAccounts();
       return accounts;
     } catch (error: unknown) {
-        return error as string[];
+      return error as string[];
     }
   }
 
@@ -24,7 +24,7 @@ export default class EthereumRpc {
       const balance = await web3.eth.getBalance(accounts[0]);
       return balance;
     } catch (error) {
-        return error as string;
+      return error as string;
     }
   }
 
@@ -33,7 +33,7 @@ export default class EthereumRpc {
       const web3 = new Web3(this.provider as any);
       const accounts = await web3.eth.getAccounts();
       const message = "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad";
-      web3.currentProvider?.send(
+      (web3.currentProvider as any)?.send(
         {
           method: "eth_sign",
           params: [accounts[0], message],
@@ -47,7 +47,7 @@ export default class EthereumRpc {
         }
       );
     } catch (error) {
-        return error as string;
+      return error as string;
     }
   }
 
@@ -62,7 +62,7 @@ export default class EthereumRpc {
       });
       return txRes.raw;
     } catch (error) {
-        return error as string;
+      return error as string;
     }
   }
 
@@ -78,7 +78,7 @@ export default class EthereumRpc {
       });
       return txRes.transactionHash;
     } catch (error) {
-        return error as string;
+      return error as string;
     }
   }
 }
