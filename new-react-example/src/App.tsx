@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { Web3Auth } from "@web3auth/web3auth";
 import { CHAIN_NAMESPACES, SafeEventEmitterProvider } from "@web3auth/base";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import { TorusWalletConnectorPlugin } from "@web3auth/torus-wallet-connector-plugin";
 import RPC from "./evm";
 import "./App.css";
 
-const clientId = "YOUR_CLIENT_ID"; // get from https://dashboard.web3auth.io
+const clientId = "BP-HcHP_eD6X-TEZhh_yTC2p9skVcoe2iwqcvDH2jV2kHxEr7U8_ZsMARgiwl_5jX9FYRNuKjtzBHfam_GUe6qg"; // get from https://dashboard.web3auth.io
 
 function App() {
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
@@ -39,9 +40,32 @@ function App() {
               clientId: "995051377270-uj3oq6tnjv9du3jj11202km4lclqn4mp.apps.googleusercontent.com", // Pass on the clientId of the login provider here - Please note this differs from the Web3Auth ClientID. This is the JWT Client ID
             },
           },
+          whiteLabel: {
+            logoLight: "https://www.yashovardhan.dev/assets/img/logo.png",
+            logoDark: "https://www.yashovardhan.dev/assets/img/logo.png",
+            defaultLanguage: "en",
+            dark: true, // whether to enable dark mode. defaultValue: false
+          }, 
         },
       });
       web3auth.configureAdapter(openloginAdapter);
+
+      const torusPlugin = new TorusWalletConnectorPlugin({
+        walletInitOptions: {
+          whiteLabel: {
+            theme: {
+              isDark: false,
+              colors: {
+                primary: "#00a8ff",
+              }
+            },
+            logoLight: "https://www.yashovardhan.dev/assets/img/logo.png",
+            logoDark: "https://www.yashovardhan.dev/assets/img/logo.png",
+          },
+        }
+      });
+      await web3auth.addPlugin(torusPlugin);
+
       setWeb3auth(web3auth);
 
       await web3auth.initModal();
